@@ -6,7 +6,8 @@ var util = require('util');
 var https = require('https');
 var request = require("request");
 var path = require('path');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
+var render = require('./render');
 
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
