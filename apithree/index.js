@@ -55,8 +55,8 @@ app.post('/ig/follow', function(req, res) {
 });
 
 app.get('/oauth/fb', function (req, res) {
-  
-    https.get('https://graph.facebook.com/v2.3/oauth/access_token?client_id=1779030152315570&redirect_uri=http://localhost:1992/oauth/fb&client_secret=e76f45468d975b274e3d3548066e88db&code=' + req.query.code, (response) => {
+
+    https.get('https://graph.facebook.com/v2.3/oauth/access_token?client_id=134558940334255&redirect_uri=http://localhost:1992/oauth/fb&client_secret=e485181d992009910034bbda611eda66&code=' + req.query.code, (response) => {
 
 	    console.log(req.query.code);
 	   	console.log(response);
@@ -69,7 +69,7 @@ app.get('/oauth/fb', function (req, res) {
 	        console.log(body);
 	        res.send(body);
 	    });
-    
+
   	});
 })
 
