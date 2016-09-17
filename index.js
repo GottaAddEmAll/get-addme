@@ -7,12 +7,20 @@ var https = require('https');
 var request = require("request");
 var path = require('path');
 var bodyParser = require('body-parser');
-var render = require('./render');
 
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
+
+/******************GET USERID*************/
+
+app.post('authorize.html', function(request, response){
+
+  console.log(response);
+});
+
+/*****************************************/
 
 app.get('/oauth/ig', function (req, res) {
   var form = new FormData();
@@ -150,6 +158,6 @@ var server = app.listen(process.env.PORT || 1992, function () {
   var host = server.address().address
   var port = server.address().port
 
-  console.log("Example app listening at http://%s:%s", host, port)
+  console.log("Example app listening at http://%s:%s", host, port);
 
 })
