@@ -138,6 +138,39 @@ app.post('/snapchat/save/:snapchat_id/', function(req, res) {
   // Get user calling function
   var snapchatId = req.params.snapchat_id
   // Save to AWS
+  var requestData = {
+    "operation": "update",
+    "tableName": "AddMeUsers",
+    "payload": {
+      "Key": {
+          "userid": "6507993840"
+      },
+      "UpdateExpression": "set scid = :id",
+      "ExpressionAttributeValues": {
+        ":id": snapchatId
+      }
+    }
+  }
+  request({
+      url: "https://rdsmefueg6.execute-api.us-east-1.amazonaws.com/prod",
+      method: "POST",
+      json: true,
+      headers: {
+          "content-type": "application/json",
+          "x-api-key": process.env.API_KEY,
+      },
+      body: requestData
+    }, function (error, response, body) {
+      if (!error && response.statusCode === 200) {
+        console.log("200: ", body)
+      }
+      else {
+        console.log("error: " + error)
+        console.log("response.statusCode: " + response.statusCode)
+        console.log("response.statusText: " + response.statusText)
+      }
+      res.send(body);
+    });
 });
 
 app.post('/ig/follow', function(req, res) {
@@ -161,6 +194,10 @@ app.post('/ig/follow', function(req, res) {
 app.post('/gh/follow', function(req, res) {
     console.log(req.query.friend_id);
 });
+
+app.get('/sc/add', function(req, res) {
+  res.redirect("https://snapchat.com/add/jonnythegee");
+})
 
 app.post('/:friend_id/addme', function(req, res) {
   console.log("Follow all called.");
@@ -225,6 +262,9 @@ app.post('/:friend_id/addme', function(req, res) {
               res.send(body);
             });
         }
+        if ("scid" in body) {
+          res.redirect("https://snapchat.com/add/"+body.scid);
+        }
       } else {
         console.log("error: " + error)
         console.log("response.statusCode: " + response.statusCode)
@@ -235,7 +275,7 @@ app.post('/:friend_id/addme', function(req, res) {
 });
 
 app.get('/', function(req, res) {
-    res.sendFile(path.join('/index.html'));
+    res.sendFile(path.join(__dirname + '/authorize.html'));
 });
 
 var server = app.listen(process.env.PORT || 1992, function () {
