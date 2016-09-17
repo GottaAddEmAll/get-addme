@@ -140,7 +140,11 @@ app.post('/:friend_id/follow_all', function(req, res) {
   // For each social profile, follow them if we can.
 });
 
-var server = app.listen(1992, function () {
+app.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname + '/index.html'));
+});
+
+var server = app.listen(process.env.PORT || 1992, function () {
 
   var host = server.address().address
   var port = server.address().port
