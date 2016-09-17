@@ -73,6 +73,25 @@ app.get('/oauth/fb', function (req, res) {
   	});
 })
 
+app.get('/oauth/gh', function (req, res) {
+
+    https.get('https://github.com/login/oauth/access_token?client_id=89221658f77bf282f490&client_secret=11f6d9c96c884834e4d3c4cfc0b8cd5c32231c52&code=' + req.query.code + '&redirect_uri=http://localhost:1992/oauth/gh', (response) => {
+
+	    console.log(req.query.code);
+	   	console.log(response);
+
+	    var body = "";
+	    response.on('readable', function() {
+	        body += response.read();
+	    });
+	    response.on('end', function() {
+	        console.log(body);
+	        res.send(body);
+	    });
+
+  	});
+})
+
 app.post('/snapchat/save/:snapchat_id/', function(req, res) {
   console.log("Save Snapchat Id");
   // Get user calling function
