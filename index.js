@@ -141,7 +141,7 @@ app.post('/:friend_id/follow_all', function(req, res) {
 });
 
 app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname + '/index.html'));
+    res.sendFile(path.join('/index.html'));
 });
 
 var server = app.listen(process.env.PORT || 1992, function () {
