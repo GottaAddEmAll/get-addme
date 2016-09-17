@@ -132,13 +132,98 @@ app.post('/snapchat/save/:snapchat_id/', function(req, res) {
   // Save to AWS
 });
 
-app.post('/:friend_id/follow_all', function(req, res) {
+app.post('/ig/follow', function(req, res) {
+    console.log(req.query.friend_id);
+    var theAccess = req.query.access_token;
+    var form = new FormData();
+    form.append('access_token', theAccess);
+    form.append('action', 'follow');
+    form.submit({hostname: "api.instagram.com", path: `/v1/users/${req.query.friend_id}/relationship?access_token=${theAccess}`, protocol: 'https:'}, (error, response) => {
+      var body = "";
+      response.on('readable', function() {
+          body += response.read();
+      });
+      response.on('end', function() {
+          console.log(body);
+          res.send(body);
+      });
+    });
+});
+
+app.post('/gh/follow', function(req, res) {
+    console.log(req.query.friend_id);
+});
+
+app.post('/:friend_id/addme', function(req, res) {
   console.log("Follow all called.");
   // Get user calling function
   // Get friend to follow
   var friendId = req.params.friend_id
   // Get all social profiles attached to friend
-  // For each social profile, follow them if we can.
+  var requestData = {
+      "operation": "read",
+      "tableName": "AddMeUsers",
+      "payload": {
+        "Key": {
+            "userid": "6507993840"
+        }
+      }
+    }
+  request({
+      url: "https://rdsmefueg6.execute-api.us-east-1.amazonaws.com/prod",
+      method: "POST",
+      json: true,
+      headers: {
+          "content-type": "application/json",
+          "x-api-key": process.env.API_KEY,
+      },
+      body: requestData
+    }, function (error, response, body) {
+      if (!error && response.statusCode === 200) {
+        console.log("200: ", body)
+        // For each social profile, follow them if we can.
+        if ("igid" in body) {
+          var form = new FormData();
+          form.append('access_token', body.ig_access);
+          form.append('action', 'follow');
+          form.submit({hostname: "api.instagram.com", path: `/v1/users/${body.igid}/relationship?access_token=${body.ig_access}`, protocol: 'https:'}, (error, response) => {
+            var body = "";
+            response.on('readable', function() {
+                body += response.read();
+            });
+            response.on('end', function() {
+                console.log(body);
+            });
+          });
+        }
+        if ("ghid" in body) {
+          request({
+              url: "https://api.github.com/user/following/"+req.query.friend_id+"?access_token="+body.gh_access,
+              method: "PUT",
+              json: true,
+              headers: {
+                "User-Agent": "AddMe"
+              },
+              body: {}
+            }, function (error, response, body) {
+              if (!error && response.statusCode === 200) {
+                console.log("200: ", body)
+              }
+              else {
+                console.log("error: " + error)
+                console.log("response.statusCode: " + response.statusCode)
+                console.log("response.statusText: " + response.statusText)
+              }
+              res.send(body);
+            });
+        }
+      } else {
+        console.log("error: " + error)
+        console.log("response.statusCode: " + response.statusCode)
+        console.log("response.statusText: " + response.statusText)
+        res.send(body);
+      }
+    });
 });
 
 app.get('/', function(req, res) {
