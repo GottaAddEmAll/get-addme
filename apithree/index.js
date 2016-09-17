@@ -4,6 +4,7 @@ var https = require('https');
 var FormData = require('form-data');
 var util = require('util');
 var https = require('https');
+var request = require("request");
 
 var bodyParser = require('body-parser')
 
@@ -14,24 +15,57 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 
 app.get('/oauth/ig', function (req, res) {
   var form = new FormData();
-  form.append('client_id','fc50049ba7df49b7b96535f892642366')
-  form.append('client_secret','6658e18d25e740e691c0cdcdd9adeabf')
+  form.append('client_id',process.env.IG_CLIENT)
+  form.append('client_secret',process.env.IG_SECRET)
   form.append('grant_type','authorization_code')
   form.append('redirect_uri','http://localhost:1992/oauth/ig')
   form.append('code',req.query.code)
   form.submit({hostname: "api.instagram.com", path: "/oauth/access_token", protocol: 'https:'}, (error, response) => {
-    console.log(error);
-    console.log(`STATUS: ${response.statusCode}`);
-    console.log(`HEADERS: ${JSON.stringify(response.headers)}`);
-    console.log(util.inspect(response));
-    console.log(JSON.stringify(response.body));
     var body = "";
     response.on('readable', function() {
         body += response.read();
     });
     response.on('end', function() {
-        console.log(body);
+      console.log(body);
+      var jsonBody = JSON.parse(body);
+      if("user" in jsonBody) {
+        var requestData = {
+          "operation": "update",
+          "tableName": "AddMeUsers",
+          "payload": {
+            "Key": {
+                "userid": "6507993840"
+            },
+            "UpdateExpression": "set igid = :id, ig_access = :ac",
+            "ExpressionAttributeValues": {
+              ":id": jsonBody.user.id,
+              ":ac": jsonBody.access_token
+            }
+          }
+        }
+        request({
+            url: "https://rdsmefueg6.execute-api.us-east-1.amazonaws.com/prod",
+            method: "POST",
+            json: true,
+            headers: {
+                "content-type": "application/json",
+                "x-api-key": process.env.API_KEY,
+            },
+            body: requestData
+          }, function (error, response, body) {
+            if (!error && response.statusCode === 200) {
+              console.log("200: ", body)
+            }
+            else {
+              console.log("error: " + error)
+              console.log("response.statusCode: " + response.statusCode)
+              console.log("response.statusText: " + response.statusText)
+            }
+            res.send(body);
+          });
+      } else {
         res.send(body);
+      }
     });
   });
 })
@@ -56,7 +90,7 @@ app.post('/ig/follow', function(req, res) {
 
 app.get('/oauth/fb', function (req, res) {
   
-    https.get('https://graph.facebook.com/v2.3/oauth/access_token?client_id=1779030152315570&redirect_uri=http://localhost:1992/oauth/fb&client_secret=e76f45468d975b274e3d3548066e88db&code=' + req.query.code, (response) => {
+    https.get('https://graph.facebook.com/v2.3/oauth/access_token?client_id=1579680899005382&redirect_uri=http://localhost:1992/oauth/fb&client_secret=415024cc5f28381039cd2dbc275cfcd3&code=' + req.query.code, (response) => {
 
 	    console.log(req.query.code);
 	   	console.log(response);
