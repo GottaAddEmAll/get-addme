@@ -88,11 +88,11 @@ app.post('/ig/follow', function(req, res) {
     });
 });
 
+
 app.get('/oauth/fb', function (req, res) {
     https.get('https://graph.facebook.com/v2.3/oauth/access_token?client_id=1579680899005382&redirect_uri=http://localhost:1992/oauth/fb&client_secret=415024cc5f28381039cd2dbc275cfcd3&code=' + req.query.code, (response) => {
 
 	    console.log(req.query.code);
-	   	console.log(response);
 
 	    var body = "";
 	    response.on('readable', function() {
