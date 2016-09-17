@@ -56,7 +56,7 @@ app.post('/ig/follow', function(req, res) {
 
 app.get('/oauth/fb', function (req, res) {
   
-    https.get('https://graph.facebook.com/v2.3/oauth/access_token?client_id=655907114571746&redirect_uri=http://localhost:1992/oauth/fb&client_secret=621eb5ce94b193d96ae6347701ee609f&code=AQDqsj_QrhVMCyg2g6xwzyrJeRf4akEjFufdT9Sau9vJWdkHpdP4pKOGMHtffnEcXsYBtxUSu5UeivZQ1qkR1lxjPjEY0uTZQ0Y3ThXpNOzTaKLbSS2oR6nKzoGMxWSQ0k7qL1dhyCpIeHCSuXoyGM8b306D6wcFtlkky8nuo5_5_rfuKogJy3m9BoW-GpcacPZmQW3CxioVTuwIT0JUEjP24NBaQekkP7GWtJmbufHKAdNn7KKh18k-4zqWZVuWFmZuakqjCB65bmKrlwzIRXOmzIZ_WkQNCJRQtfIGLajHAPHRZQwE38kRVQgfHrbtlvI', (response) => {
+    https.get('https://graph.facebook.com/v2.3/oauth/access_token?client_id=1779030152315570&redirect_uri=http://localhost:1992/oauth/fb&client_secret=e76f45468d975b274e3d3548066e88db&code=' + req.query.code, (response) => {
 
 	    console.log(req.query.code);
 	   	console.log(response);
