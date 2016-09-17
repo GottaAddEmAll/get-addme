@@ -37,8 +37,8 @@ app.get('/oauth/ig', function (req, res) {
 })
 
 app.post('/ig/follow', function(req, res) {
-    console.log(req.query.friend_id)
-    theAccess = req.query.access_token
+    console.log(req.query.friend_id);
+    var theAccess = req.query.access_token;
     var form = new FormData();
     form.append('access_token', theAccess);
     form.append('action', 'follow');
@@ -73,6 +73,21 @@ app.get('/oauth/fb', function (req, res) {
   	});
 })
 
+app.post('/snapchat/save/:snapchat_id/', function(req, res) {
+  console.log("Save Snapchat Id");
+  // Get user calling function
+  var snapchatId = req.params.snapchat_id
+  // Save to AWS
+});
+
+app.post('/:friend_id/follow_all', function(req, res) {
+  console.log("Follow all called.");
+  // Get user calling function
+  // Get friend to follow
+  var friendId = req.params.friend_id
+  // Get all social profiles attached to friend
+  // For each social profile, follow them if we can.
+});
 
 var server = app.listen(1992, function () {
 
