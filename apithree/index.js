@@ -3,6 +3,8 @@ var app = express();
 var https = require('https');
 var FormData = require('form-data');
 var util = require('util');
+var https = require('https');
+
 var bodyParser = require('body-parser')
 
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
@@ -51,6 +53,31 @@ app.post('/ig/follow', function(req, res) {
       });
     });
 });
+
+app.get('/oauth/fb', function (req, res) {
+  // var form = new FormData();
+  // form.append('client_id','655907114571746')
+  // form.append('redirect_uri','http://localhost:1992/oauth/fb')
+  // form.append('client_secret','621eb5ce94b193d96ae6347701ee609f')
+  // form.append('code', req.query.code)
+  // form.submit({hostname: "graph.facebook.com/v2.3", path: "/oauth/access_token", protocol: 'https:'}, (error, response) => {
+    https.get('https://graph.facebook.com/v2.3/oauth/access_token?client_id=655907114571746&redirect_uri=http://localhost:1992/oauth/fb&client_secret=621eb5ce94b193d96ae6347701ee609f&code=AQDqsj_QrhVMCyg2g6xwzyrJeRf4akEjFufdT9Sau9vJWdkHpdP4pKOGMHtffnEcXsYBtxUSu5UeivZQ1qkR1lxjPjEY0uTZQ0Y3ThXpNOzTaKLbSS2oR6nKzoGMxWSQ0k7qL1dhyCpIeHCSuXoyGM8b306D6wcFtlkky8nuo5_5_rfuKogJy3m9BoW-GpcacPZmQW3CxioVTuwIT0JUEjP24NBaQekkP7GWtJmbufHKAdNn7KKh18k-4zqWZVuWFmZuakqjCB65bmKrlwzIRXOmzIZ_WkQNCJRQtfIGLajHAPHRZQwE38kRVQgfHrbtlvI', (response) => {
+
+	    console.log(req.query.code);
+	   	console.log(response);
+
+	    var body = "";
+	    response.on('readable', function() {
+	        body += response.read();
+	    });
+	    response.on('end', function() {
+	        console.log(body);
+	        res.send(body);
+	    });
+    
+  	});
+})
+
 
 var server = app.listen(1992, function () {
 
