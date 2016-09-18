@@ -10,7 +10,7 @@ One stop shop to add a friend on multiple social media sites
 
 #### Sync your social media
 
-![Social Media](/WebPage/img/portfolio/instaGRAM.png)
+![Social Media](/WebPage/img/portfolio/InstaGRAM.png)
 
 #### Download a QR Scanner
 
