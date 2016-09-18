@@ -17,7 +17,8 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 
 app.post('authorize.html', function(request, response){
 
-  console.log(response);
+
+
 });
 
 /*****************************************/
