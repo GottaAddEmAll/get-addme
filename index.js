@@ -7,49 +7,23 @@ var https = require('https');
 var request = require("request");
 var path = require('path');
 var bodyParser = require('body-parser');
+var FB = require('fb');
 
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
 
+var userid;
+
 /******************GET USERID*************/
 
-function handleIncomingRequest(request, response) {
-var jsonData;
-  request.on('readable', function(){
-    var data = request.data();
-    if(typeof data === 'string'){
-      jsonData += data;
-    } else if (typeof data === 'object' && data instanceof Buffer){
-      jsonData += data.toString("utf8");
-    }
-  });
-
-  request.on('end', function(){
-    var out = '';
-    if(!jsonData) {
-      out = "I got nothing";
-    } else {
-      var json;
-      try {
-        json = JSON.parse(jsonData);
-      } catch (e) {
-      }
-      if(!json){
-        out = "Invalid JSON";
-      } else {
-        out = "Valid JSON data: " + jsonData;
-      }
-    }
-
-    response.end(out);
-  });
-};
-
-app.post('http://localhost:1992', handleIncomingRequest);
+app.post("/", function (req, res) {
+    userid = req.body.user.name;
+});
 
 /*****************************************/
+
 
 app.get('/oauth/ig', function (req, res) {
   var form = new FormData();
@@ -229,11 +203,9 @@ app.post('/snapchat/save/:snapchat_id/', function(req, res) {
     "tableName": "AddMeUsers",
     "payload": {
       "Key": {
-<<<<<<< HEAD
+
           "userid": "6507993840"
-=======
-          "userid": "6093044061"
->>>>>>> 0c5b9fde0aca204c6a051e65ebe3daa7a9e78a8f
+
       },
       "UpdateExpression": "set scid = :id",
       "ExpressionAttributeValues": {
