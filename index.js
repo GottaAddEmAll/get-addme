@@ -127,10 +127,67 @@ app.get('/oauth/gh', function (req, res) {
 	        body += response.read();
 	    });
 	    response.on('end', function() {
-	        console.log(body);
-	        res.send(body);
-	    });
-
+        console.log(body);
+        var accessToken = body.split("access_token=")[1].split("&")[0];
+        console.log(accessToken)
+        request({
+            url: "https://api.github.com/user?access_token="+accessToken,
+            method: "GET",
+            json: true,
+            headers: {
+                "User-Agent": "AddMe"
+            },
+            body: {}
+          }, function (error, response, body) {
+            if (!error && response.statusCode === 200) {
+              console.log("200: ", body)
+              if ("login" in body) {
+               var requestData = {
+                  "operation": "update",
+                  "tableName": "AddMeUsers",
+                  "payload": {
+                    "Key": {
+                        "userid": "6507993840"
+                    },
+                    "UpdateExpression": "set ghid = :id, gh_access = :ac",
+                    "ExpressionAttributeValues": {
+                      ":id": body.login,
+                      ":ac": accessToken
+                    }
+                  }
+                }
+                request({
+                    url: "https://rdsmefueg6.execute-api.us-east-1.amazonaws.com/prod",
+                    method: "POST",
+                    json: true,
+                    headers: {
+                        "content-type": "application/json",
+                        "x-api-key": process.env.API_KEY,
+                    },
+                    body: requestData
+                  }, function (error, response, body) {
+                    if (!error && response.statusCode === 200) {
+                      console.log("200: ", body)
+                    }
+                    else {
+                      console.log("error: " + error)
+                      console.log("response.statusCode: " + response.statusCode)
+                      console.log("response.statusText: " + response.statusText)
+                    }
+                    res.send(body);
+                  });
+              } else {
+                res.send(body);
+              }
+            }
+            else {
+              console.log("error: " + error)
+              console.log("response.statusCode: " + response.statusCode)
+              console.log("response.statusText: " + response.statusText)
+              res.send(body);
+            }
+          });
+  	    });
   	});
 })
 
@@ -139,19 +196,140 @@ app.post('/snapchat/save/:snapchat_id/', function(req, res) {
   // Get user calling function
   var snapchatId = req.params.snapchat_id
   // Save to AWS
+  var requestData = {
+    "operation": "update",
+    "tableName": "AddMeUsers",
+    "payload": {
+      "Key": {
+          "userid": "6507993840"
+      },
+      "UpdateExpression": "set scid = :id",
+      "ExpressionAttributeValues": {
+        ":id": snapchatId
+      }
+    }
+  }
+  request({
+      url: "https://rdsmefueg6.execute-api.us-east-1.amazonaws.com/prod",
+      method: "POST",
+      json: true,
+      headers: {
+          "content-type": "application/json",
+          "x-api-key": process.env.API_KEY,
+      },
+      body: requestData
+    }, function (error, response, body) {
+      if (!error && response.statusCode === 200) {
+        console.log("200: ", body)
+      }
+      else {
+        console.log("error: " + error)
+        console.log("response.statusCode: " + response.statusCode)
+        console.log("response.statusText: " + response.statusText)
+      }
+      res.send(body);
+    });
 });
 
-app.post('/:friend_id/follow_all', function(req, res) {
+app.post('/ig/follow', function(req, res) {
+    console.log(req.query.friend_id);
+    var theAccess = req.query.access_token;
+    var form = new FormData();
+    form.append('access_token', theAccess);
+    form.append('action', 'follow');
+    form.submit({hostname: "api.instagram.com", path: `/v1/users/${req.query.friend_id}/relationship?access_token=${theAccess}`, protocol: 'https:'}, (error, response) => {
+      var body = "";
+      response.on('readable', function() {
+          body += response.read();
+      });
+      response.on('end', function() {
+          console.log(body);
+          res.send(body);
+      });
+    });
+});
+
+app.post('/gh/follow', function(req, res) {
+    console.log(req.query.friend_id);
+});
+
+app.post('/:friend_id/addme', function(req, res) {
   console.log("Follow all called.");
   // Get user calling function
   // Get friend to follow
   var friendId = req.params.friend_id
   // Get all social profiles attached to friend
-  // For each social profile, follow them if we can.
+  var requestData = {
+      "operation": "read",
+      "tableName": "AddMeUsers",
+      "payload": {
+        "Key": {
+            "userid": "6507993840"
+        }
+      }
+    }
+  request({
+      url: "https://rdsmefueg6.execute-api.us-east-1.amazonaws.com/prod",
+      method: "POST",
+      json: true,
+      headers: {
+          "content-type": "application/json",
+          "x-api-key": process.env.API_KEY,
+      },
+      body: requestData
+    }, function (error, response, body) {
+      if (!error && response.statusCode === 200) {
+        console.log("200: ", body)
+        // For each social profile, follow them if we can.
+        if ("igid" in body) {
+          var form = new FormData();
+          form.append('access_token', body.ig_access);
+          form.append('action', 'follow');
+          form.submit({hostname: "api.instagram.com", path: `/v1/users/${body.igid}/relationship?access_token=${body.ig_access}`, protocol: 'https:'}, (error, response) => {
+            var body = "";
+            response.on('readable', function() {
+                body += response.read();
+            });
+            response.on('end', function() {
+                console.log(body);
+            });
+          });
+        }
+        if ("ghid" in body) {
+          request({
+              url: "https://api.github.com/user/following/"+req.query.friend_id+"?access_token="+body.gh_access,
+              method: "PUT",
+              json: true,
+              headers: {
+                "User-Agent": "AddMe"
+              },
+              body: {}
+            }, function (error, response, body) {
+              if (!error && response.statusCode === 200) {
+                console.log("200: ", body)
+              }
+              else {
+                console.log("error: " + error)
+                console.log("response.statusCode: " + response.statusCode)
+                console.log("response.statusText: " + response.statusText)
+              }
+              res.send(body);
+            });
+        }
+        if ("scid" in body) {
+          res.redirect("https://snapchat.com/add/"+body.scid);
+        }
+      } else {
+        console.log("error: " + error)
+        console.log("response.statusCode: " + response.statusCode)
+        console.log("response.statusText: " + response.statusText)
+        res.send(body);
+      }
+    });
 });
 
 app.get('/', function(req, res) {
-    res.sendFile(path.join('/index.html'));
+    res.sendFile(path.join(__dirname + '/authorize.html'));
 });
 
 var server = app.listen(process.env.PORT || 1992, function () {
