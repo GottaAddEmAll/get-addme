@@ -299,45 +299,46 @@ app.post('/:friend_id/addme', function(req, res) {
             },
             body: friendRequestData
           }, function (error, response, friendBody) {
-        // For each social profile, follow them if we can.
-        if ("igid" in myBody && "igid" in friendBody) {
-          var form = new FormData();
-          form.append('access_token', myBody.ig_access);
-          form.append('action', 'follow');
-          form.submit({hostname: "api.instagram.com", path: `/v1/users/${friendBody.igid}/relationship?access_token=${myBody.ig_access}`, protocol: 'https:'}, (error, response) => {
-            var body = "";
-            response.on('readable', function() {
-                body += response.read();
-            });
-            response.on('end', function() {
-                console.log(body);
-            });
-          });
-        }
-        if ("ghid" in myBody && "ghid" in friendBody) {
-          request({
-              url: "https://api.github.com/user/following/"+friendBody.ghid+"?access_token="+myBody.gh_access,
-              method: "PUT",
-              json: true,
-              headers: {
-                "User-Agent": "AddMe"
-              },
-              body: {}
-            }, function (error, response, body) {
-              if (!error && response.statusCode === 200) {
-                console.log("200: ", body)
-              }
-              else {
-                console.log("error: " + error)
-                console.log("response.statusCode: " + response.statusCode)
-                console.log("response.statusText: " + response.statusText)
-              }
-              res.send(body);
-            });
-        }
-        if ("scid" in myBody && "scid" in friendBody) {
-          res.redirect("https://snapchat.com/add/"+friendBody.scid);
-        }
+            // For each social profile, follow them if we can.
+            if ("igid" in myBody && "igid" in friendBody) {
+              var form = new FormData();
+              form.append('access_token', myBody.ig_access);
+              form.append('action', 'follow');
+              form.submit({hostname: "api.instagram.com", path: `/v1/users/${friendBody.igid}/relationship?access_token=${myBody.ig_access}`, protocol: 'https:'}, (error, response) => {
+                var body = "";
+                response.on('readable', function() {
+                    body += response.read();
+                });
+                response.on('end', function() {
+                    console.log(body);
+                });
+              });
+            }
+            if ("ghid" in myBody && "ghid" in friendBody) {
+              request({
+                  url: "https://api.github.com/user/following/"+friendBody.ghid+"?access_token="+myBody.gh_access,
+                  method: "PUT",
+                  json: true,
+                  headers: {
+                    "User-Agent": "AddMe"
+                  },
+                  body: {}
+                }, function (error, response, body) {
+                  if (!error && response.statusCode === 200) {
+                    console.log("200: ", body)
+                  }
+                  else {
+                    console.log("error: " + error)
+                    console.log("response.statusCode: " + response.statusCode)
+                    console.log("response.statusText: " + response.statusText)
+                  }
+                  res.send(body);
+                });
+            }
+            if ("scid" in myBody && "scid" in friendBody) {
+              res.redirect("https://snapchat.com/add/"+friendBody.scid);
+            }
+        });
       } else {
         console.log("error: " + error)
         console.log("response.statusCode: " + response.statusCode)
