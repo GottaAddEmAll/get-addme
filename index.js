@@ -255,15 +255,16 @@ app.post('/gh/follow', function(req, res) {
 app.post('/:friend_id/addme', function(req, res) {
   console.log("Follow all called.");
   // Get user calling function
+  var myId = req.query.my_id;
   // Get friend to follow
-  var friendId = req.params.friend_id
+  var friendId = req.params.friend_id;
   // Get all social profiles attached to friend
-  var requestData = {
+  var myRequestData = {
       "operation": "read",
       "tableName": "AddMeUsers",
       "payload": {
         "Key": {
-            "userid": "6507993840"
+            "userid": myId
         }
       }
     }
@@ -275,16 +276,35 @@ app.post('/:friend_id/addme', function(req, res) {
           "content-type": "application/json",
           "x-api-key": process.env.API_KEY,
       },
-      body: requestData
-    }, function (error, response, body) {
+      body: myRequestData
+    }, function (error, response, myBody) {
       if (!error && response.statusCode === 200) {
         console.log("200: ", body)
+        var friendRequestData = {
+            "operation": "read",
+            "tableName": "AddMeUsers",
+            "payload": {
+              "Key": {
+                  "userid": friendId
+              }
+            }
+          }
+        request({
+            url: "https://rdsmefueg6.execute-api.us-east-1.amazonaws.com/prod",
+            method: "POST",
+            json: true,
+            headers: {
+                "content-type": "application/json",
+                "x-api-key": process.env.API_KEY,
+            },
+            body: friendRequestData
+          }, function (error, response, friendBody) {
         // For each social profile, follow them if we can.
-        if ("igid" in body) {
+        if ("igid" in myBody && "igid" in friendBody) {
           var form = new FormData();
-          form.append('access_token', body.ig_access);
+          form.append('access_token', myBody.ig_access);
           form.append('action', 'follow');
-          form.submit({hostname: "api.instagram.com", path: `/v1/users/${body.igid}/relationship?access_token=${body.ig_access}`, protocol: 'https:'}, (error, response) => {
+          form.submit({hostname: "api.instagram.com", path: `/v1/users/${friendBody.igid}/relationship?access_token=${myBody.ig_access}`, protocol: 'https:'}, (error, response) => {
             var body = "";
             response.on('readable', function() {
                 body += response.read();
@@ -294,9 +314,9 @@ app.post('/:friend_id/addme', function(req, res) {
             });
           });
         }
-        if ("ghid" in body) {
+        if ("ghid" in myBody && "ghid" in friendBody) {
           request({
-              url: "https://api.github.com/user/following/"+req.query.friend_id+"?access_token="+body.gh_access,
+              url: "https://api.github.com/user/following/"+friendBody.ghid+"?access_token="+myBody.gh_access,
               method: "PUT",
               json: true,
               headers: {
@@ -315,8 +335,8 @@ app.post('/:friend_id/addme', function(req, res) {
               res.send(body);
             });
         }
-        if ("scid" in body) {
-          res.redirect("https://snapchat.com/add/"+body.scid);
+        if ("scid" in myBody && "scid" in friendBody) {
+          res.redirect("https://snapchat.com/add/"+friendBody.scid);
         }
       } else {
         console.log("error: " + error)
