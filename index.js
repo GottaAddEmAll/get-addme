@@ -203,9 +203,13 @@ app.post('/snapchat/save/:snapchat_id/', function(req, res) {
     "tableName": "AddMeUsers",
     "payload": {
       "Key": {
+<<<<<<< HEAD
 
           "userid": "6507993840"
 
+=======
+          "userid": "6093044061"
+>>>>>>> 10d9acf27bd8fc7bea365fb420f9507cb1f3c677
       },
       "UpdateExpression": "set scid = :id",
       "ExpressionAttributeValues": {
@@ -355,6 +359,21 @@ app.post('/:friend_id/addme', function(req, res) {
         res.send(body);
       }
     });
+});
+
+app.get('/JtoE', function(req, res) {
+  var options = { method: 'POST',
+  url: 'https://getaddme.herokuapp.com/6074220119/addme',
+  qs: { my_id: '6507993840' },
+  headers: 
+   { 'postman-token': '1a699036-0da7-abe5-94b5-ae09936b31d5',
+     'cache-control': 'no-cache' } };
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+
+    console.log(body);
+  });
 });
 
 app.get('/', function(req, res) {
