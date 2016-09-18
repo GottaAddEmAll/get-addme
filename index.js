@@ -15,9 +15,39 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 
 /******************GET USERID*************/
 
-app.post("/", function (req, res) {
-    console.log(req.body.user.name)
-});
+function handleIncomingRequest(request, response) {
+var jsonData;
+  request.on('readable', function(){
+    var data = request.data();
+    if(typeof data === 'string'){
+      jsonData += data;
+    } else if (typeof data === 'object' && data instanceof Buffer){
+      jsonData += data.toString("utf8");
+    }
+  });
+
+  request.on('end', function(){
+    var out = '';
+    if(!jsonData) {
+      out = "I got nothing";
+    } else {
+      var json;
+      try {
+        json = JSON.parse(jsonData);
+      } catch (e) {
+      }
+      if(!json){
+        out = "Invalid JSON";
+      } else {
+        out = "Valid JSON data: " + jsonData;
+      }
+    }
+
+    response.end(out);
+  });
+};
+
+app.post('http://localhost:1992', handleIncomingRequest);
 
 /*****************************************/
 
@@ -189,45 +219,45 @@ app.get('/oauth/gh', function (req, res) {
   	});
 })
 
-// app.post('/snapchat/save/:snapchat_id/', function(req, res) {
-//   console.log("Save Snapchat Id");
-//   // Get user calling function
-//   var snapchatId = req.params.snapchat_id
-//   // Save to AWS
-//   var requestData = {
-//     "operation": "update",
-//     "tableName": "AddMeUsers",
-//     "payload": {
-//       "Key": {
-//           "userid": "6507993840"
-//       },
-//       "UpdateExpression": "set scid = :id",
-//       "ExpressionAttributeValues": {
-//         ":id": snapchatId
-//       }
-//     }
-//   }
-//   request({
-//       url: "https://rdsmefueg6.execute-api.us-east-1.amazonaws.com/prod",
-//       method: "POST",
-//       json: true,
-//       headers: {
-//           "content-type": "application/json",
-//           "x-api-key": process.env.API_KEY,
-//       },
-//       body: requestData
-//     }, function (error, response, body) {
-//       if (!error && response.statusCode === 200) {
-//         console.log("200: ", body)
-//       }
-//       else {
-//         console.log("error: " + error)
-//         console.log("response.statusCode: " + response.statusCode)
-//         console.log("response.statusText: " + response.statusText)
-//       }
-//       res.send(body);
-//     });
-// });
+app.post('/snapchat/save/:snapchat_id/', function(req, res) {
+  console.log("Save Snapchat Id");
+  // Get user calling function
+  var snapchatId = req.params.snapchat_id
+  // Save to AWS
+  var requestData = {
+    "operation": "update",
+    "tableName": "AddMeUsers",
+    "payload": {
+      "Key": {
+          "userid": "6507993840"
+      },
+      "UpdateExpression": "set scid = :id",
+      "ExpressionAttributeValues": {
+        ":id": snapchatId
+      }
+    }
+  }
+  request({
+      url: "https://rdsmefueg6.execute-api.us-east-1.amazonaws.com/prod",
+      method: "POST",
+      json: true,
+      headers: {
+          "content-type": "application/json",
+          "x-api-key": process.env.API_KEY,
+      },
+      body: requestData
+    }, function (error, response, body) {
+      if (!error && response.statusCode === 200) {
+        console.log("200: ", body)
+      }
+      else {
+        console.log("error: " + error)
+        console.log("response.statusCode: " + response.statusCode)
+        console.log("response.statusText: " + response.statusText)
+      }
+      res.send(body);
+    });
+});
 
 app.post('/ig/follow', function(req, res) {
     console.log(req.query.friend_id);
