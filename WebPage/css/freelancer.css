@@ -196,6 +196,10 @@ section.success {
   section.first {
     padding-top: 75px;
   }
+  .social-render {
+    height: 100vh;
+    display: block;
+  }
 }
 #portfolio .portfolio-item {
   margin: 0 0 15px;
@@ -502,4 +506,81 @@ fieldset[disabled] .btn-success.active {
 .portfolio-modal .modal-backdrop {
   opacity: 0;
   display: none;
+}
+
+
+/******************************************************/
+
+.intro-text {
+  width: 30vw;
+  margin: 0 auto;
+}
+
+#phone-number {
+    width: 30vw;
+    height: 50px;
+    color: black;
+    box-sizing: border-box;
+    border: 2px solid #CCC;
+    border-radius: 10px;
+    font-size: 16px;
+    background-color: #FFF;
+    box-shadow: 0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    padding: 12px 20px 12px 40px;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+}
+
+#submit-phone {
+  box-shadow: 0 10px 15px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  height: 50px;
+  width: 200px;
+  font-size: 30px;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+.social-render {
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;;
+  justify-content: center;
+}
+
+.social-render > a > button {
+  margin: 20px;
+  height: 33vh;
+  width: 20vw;
+  font-size: 15vmax;
+  border-radius: 10px;
+  box-shadow: 0 10px 15px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+
+}
+
+@media (max-width: 767px) {
+
+  #phone-number {
+    margin-left: -25px;
+    width: 250px;
+    font-size: 12px;
+  }
+
+  .social-render {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .social-render > a > button {
+    margin: 20px;
+    height: 15vh;
+    width: 20vw;
+    font-size: 9vmax;
+    border-radius: 10px;
+    box-shadow: 0 10px 15px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+
+  }
 }
