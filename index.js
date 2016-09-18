@@ -15,9 +15,8 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 
 /******************GET USERID*************/
 
-app.post('authorize.html', function(request, response){
-
-  console.log(response);
+app.post("/", function (req, res) {
+    console.log(req.body.user.name)
 });
 
 /*****************************************/
@@ -27,7 +26,7 @@ app.get('/oauth/ig', function (req, res) {
   form.append('client_id',process.env.IG_CLIENT)
   form.append('client_secret',process.env.IG_SECRET)
   form.append('grant_type','authorization_code')
-  form.append('redirect_uri','http://localhost:1992/oauth/ig')
+  form.append('redirect_uri','http://getaddme.herokuapp.com/oauth/ig')
   form.append('code',req.query.code)
   form.submit({hostname: "api.instagram.com", path: "/oauth/access_token", protocol: 'https:'}, (error, response) => {
     var body = "";
@@ -99,7 +98,7 @@ app.post('/ig/follow', function(req, res) {
 
 
 app.get('/oauth/fb', function (req, res) {
-    https.get('https://graph.facebook.com/v2.3/oauth/access_token?client_id=134558940334255&redirect_uri=http://localhost:1992/oauth/fb&client_secret=e485181d992009910034bbda611eda66&code=' + req.query.code, (response) => {
+    https.get('https://graph.facebook.com/v2.3/oauth/access_token?client_id=134558940334255&redirect_uri=http://getaddme.herokuapp.com/oauth/fb&client_secret=e485181d992009910034bbda611eda66&code=' + req.query.code, (response) => {
 
 	    console.log(req.query.code);
 
@@ -117,7 +116,7 @@ app.get('/oauth/fb', function (req, res) {
 
 app.get('/oauth/gh', function (req, res) {
 
-    https.get('https://github.com/login/oauth/access_token?client_id=89221658f77bf282f490&client_secret=11f6d9c96c884834e4d3c4cfc0b8cd5c32231c52&code=' + req.query.code + '&redirect_uri=http://localhost:1992/oauth/gh', (response) => {
+    https.get('https://github.com/login/oauth/access_token?client_id=89221658f77bf282f490&client_secret=11f6d9c96c884834e4d3c4cfc0b8cd5c32231c52&code=' + req.query.code + '&redirect_uri=http://getaddme.herokuapp.com/oauth/gh', (response) => {
 
 	    console.log(req.query.code);
 
