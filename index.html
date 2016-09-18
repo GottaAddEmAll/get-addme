@@ -7,6 +7,8 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Add Me</title>
+    <script   src="https://code.jquery.com/jquery-3.1.0.min.js"   integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="   crossorigin="anonymous"></script>
+    <script src="render.js" charset="utf-8"></script>
 </head>
 
 
@@ -16,6 +18,7 @@
 
     <!-- Theme CSS -->
     <link href="WebPage/css/freelancer.min.css" rel="stylesheet">
+    <link href="WebPage/css/freelancer.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
     <link href="WebPage/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -70,10 +73,13 @@
     <header>
         <div class="container">
             <div class="row">
-                <div class="col-lg-12">
+                <div id="social" class="col-lg-12">
                     <img class="img-responsive" width="300" height="300" src="WebPage/img/Asset 2.png" alt="">
                     <div class="intro-text">
-                        <span class="name">Download AddMe</span>
+                        <form id="phone-form" method="post" action="/" onsubmit="return false;">
+                          <input id="phone-number" type="text" name="user[name]" value="" placeholder="Enter Your Phone Number: XXXXXXXXXX">
+                          <input id="submit-phone" type="submit" value="SUBMIT">
+                        </form>
                         <hr class="star-light">
                         <span class="skills">Enhance your network with AddMe, a simple app that automagically adds your contacts to facebook, email, twitter, snapchat, and more!</span>
                     </div>
